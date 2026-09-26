@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
+import { useLenis } from "lenis/react";
 import { InstagramLogo, List, ShoppingBagOpen, X } from "@phosphor-icons/react";
 import { nav, site } from "@/config/site";
 import { cartCount, useCart } from "@/store/cart";
@@ -16,16 +17,19 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const count = useCart((s) => cartCount(s.lines));
   const openCart = useCart((s) => s.open);
+  const lenis = useLenis();
 
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 24));
   useEffect(() => setMenuOpen(false), [pathname]);
   useEffect(() => {
     document.documentElement.style.overflow = menuOpen ? "hidden" : "";
-  }, [menuOpen]);
+    if (menuOpen) lenis?.stop();
+    else lenis?.start();
+  }, [menuOpen, lenis]);
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-40 transition-[background-color,box-shadow,backdrop-filter] duration-500 ${
+      className={`fixed inset-x-0 top-0 z-[45] transition-[background-color,box-shadow,backdrop-filter] duration-500 ${
         scrolled || menuOpen ? "bg-paper/85 shadow-[0_1px_0_var(--color-line)] backdrop-blur-xl" : ""
       }`}
     >
@@ -108,9 +112,9 @@ export function Header() {
             animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
             exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
             transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            className="h-[calc(100dvh-72px)] overflow-y-auto bg-paper px-5 pb-10 lg:hidden"
+            className="flex h-[calc(100dvh-72px)] flex-col overflow-hidden bg-paper px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-2 lg:hidden"
           >
-            <ul className="pt-6">
+            <ul className="flex flex-1 flex-col justify-center">
               {[{ href: "/", label: "Home" }, ...nav].map((item, i) => (
                 <motion.li
                   key={item.href}
@@ -118,17 +122,17 @@ export function Header() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.08 + i * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <Link href={item.href} className="block border-b border-line py-4 font-display text-4xl">
+                  <Link href={item.href} className="block border-b border-line py-[1.6dvh] font-display text-[clamp(1.5rem,4.4dvh,2.25rem)] leading-tight">
                     {item.label}
                   </Link>
                 </motion.li>
               ))}
             </ul>
-            <div className="mt-10 flex flex-col gap-3">
-              <Link href="/menu" className="grid h-14 place-items-center rounded-full bg-accent text-lg font-medium text-white">
+            <div className="mt-4 flex flex-col gap-2.5">
+              <Link href="/menu" className="grid h-[clamp(2.75rem,6.5dvh,3.5rem)] place-items-center rounded-full bg-accent text-lg font-medium text-white">
                 Order now
               </Link>
-              <a href={site.instagram} target="_blank" rel="noopener noreferrer" className="grid h-14 place-items-center rounded-full border border-line text-lg">
+              <a href={site.instagram} target="_blank" rel="noopener noreferrer" className="grid h-[clamp(2.75rem,6.5dvh,3.5rem)] place-items-center rounded-full border border-line text-lg">
                 @{site.instagramHandle}
               </a>
             </div>

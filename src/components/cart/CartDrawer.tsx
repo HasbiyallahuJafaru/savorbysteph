@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { useLenis } from "lenis/react";
 import { ChatText, Minus, Plus, ShoppingBagOpen, Storefront, Trash, Truck, WhatsappLogo, X } from "@phosphor-icons/react";
 import { site } from "@/config/site";
 import { formatPrice } from "@/data/menu";
@@ -26,6 +27,7 @@ const timeSlots = ["11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:0
 export function CartDrawer() {
   const { lines, details, isOpen, close, setQty, remove, setDetails, clear } = useCart();
   const isDesktop = useIsDesktop();
+  const lenis = useLenis();
   const [errors, setErrors] = useState<OrderErrors>({});
   const [sent, setSent] = useState(false);
   const total = cartTotal(lines);
@@ -35,12 +37,14 @@ export function CartDrawer() {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     document.documentElement.style.overflow = "hidden";
+    lenis?.stop();
     window.addEventListener("keydown", onKey);
     return () => {
       document.documentElement.style.overflow = "";
+      lenis?.start();
       window.removeEventListener("keydown", onKey);
     };
-  }, [isOpen, close]);
+  }, [isOpen, close, lenis]);
 
   useEffect(() => {
     if (!isOpen) setSent(false);
