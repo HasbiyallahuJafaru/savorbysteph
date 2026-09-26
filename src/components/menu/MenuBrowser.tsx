@@ -116,7 +116,6 @@ function DishGrid({ items, eager }: { items: typeof menu; eager?: boolean }) {
         {items.map((item, i) => (
           <motion.li
             key={item.slug}
-            layout
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}

@@ -47,9 +47,9 @@ export default async function DishPage({ params }: Params) {
       <section className="relative overflow-hidden pt-[72px]">
         <div aria-hidden className="absolute -left-48 top-24 size-[560px] rounded-full bg-accent-tint" />
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-20 pt-10 md:px-8 lg:grid-cols-2 lg:gap-20 lg:pt-16">
-          <Reveal className="mx-auto w-[82%] max-w-[520px] lg:w-full">
+          <div className="mx-auto w-[82%] max-w-[520px] lg:w-full">
             <CircleImage src={item.image} alt={`${item.name} from Savorbysteph, homemade Nigerian food in Charlotte`} sizes="(max-width: 1024px) 80vw, 520px" priority />
-          </Reveal>
+          </div>
 
           <div>
             <nav aria-label="Breadcrumb">

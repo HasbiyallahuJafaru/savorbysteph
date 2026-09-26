@@ -88,15 +88,15 @@ function Plate({
       </mesh>
       <group onPointerOver={over} onPointerOut={out} onClick={onSelect} name={label}>
         <mesh rotation-x={Math.PI / 2}>
-          <cylinderGeometry args={[radius * 1.2, radius * 1.08, radius * 0.12, 72]} />
+          <cylinderGeometry args={[radius * 1.2, radius * 1.08, radius * 0.12, 48]} />
           <meshStandardMaterial color="#ffffff" roughness={0.28} metalness={0} />
         </mesh>
         <mesh position-z={radius * 0.065}>
-          <torusGeometry args={[radius * 1.1, radius * 0.045, 16, 96]} />
+          <torusGeometry args={[radius * 1.1, radius * 0.045, 12, 64]} />
           <meshStandardMaterial color="#f7f5f2" roughness={0.22} />
         </mesh>
         <mesh ref={food} position-z={radius * 0.066}>
-          <circleGeometry args={[radius, 72]} />
+          <circleGeometry args={[radius, 48]} />
           <meshStandardMaterial map={texture} roughness={0.75} toneMapped={false} />
         </mesh>
       </group>
@@ -185,8 +185,14 @@ export default function HeroScene({ center, orbit, onReady }: Props) {
     setCompact(window.matchMedia("(max-width: 767px)").matches);
     const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { rootMargin: "80px" });
     if (wrap.current) io.observe(wrap.current);
+    // Stop rendering as soon as a page change starts so the router gets the main thread.
+    const onNavigate = (e: MouseEvent) => {
+      if ((e.target as Element).closest?.("a[href^='/']")) setVisible(false);
+    };
+    document.addEventListener("click", onNavigate, true);
     return () => {
       io.disconnect();
+      document.removeEventListener("click", onNavigate, true);
       document.body.style.cursor = "";
     };
   }, []);
@@ -197,7 +203,7 @@ export default function HeroScene({ center, orbit, onReady }: Props) {
     <div ref={wrap} className="absolute inset-0">
       <Canvas
         frameloop={visible ? "always" : "never"}
-        dpr={[1, 1.75]}
+        dpr={[1, 1.5]}
         camera={{ position: [0, 0, 11], fov: 38 }}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         aria-hidden
